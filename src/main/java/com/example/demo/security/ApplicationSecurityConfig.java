@@ -8,11 +8,22 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+
+import static com.example.demo.security.ApplicationUserRole.ADMIN;
+import static com.example.demo.security.ApplicationUserRole.STUDENT;
 
 @Configuration
 @EnableWebSecurity
 public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private final PasswordEncoder passwordEncoder;
+
+    public ApplicationSecurityConfig(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -30,11 +41,16 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     protected UserDetailsService userDetailsService() {
         UserDetails davidUser = User.builder()
                 .username("david")
-                .password("password")
-                .roles("STUDENT")
+                .password(passwordEncoder.encode("password"))
+                .roles(STUDENT.name())
                 .build();
 
+        UserDetails kikeUser = User.builder()
+                .username("kike")
+                .password(passwordEncoder.encode("password"))
+                .roles(ADMIN.name())
+                .build();
 
-        return new InMemoryUserDetailsManager(davidUser);
+        return new InMemoryUserDetailsManager(davidUser, kikeUser);
     }
 }
