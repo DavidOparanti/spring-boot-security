@@ -12,4 +12,9 @@ public class TemplateController {
     public String getLoginPage() {
         return "login";
     }
+
+    @GetMapping("courses")
+    public String getCourses() {
+        return "courses";
+    }
 }
